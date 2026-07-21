@@ -1,187 +1,273 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bao Bao Club</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bao Bao Club — o teu personal shopper</title>
+<meta name="description" content="Escreve o que precisas, nós tratamos da pesquisa, compra e entrega. Bao Bao Club é o teu personal shopper digital." />
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="#FBF8F4" />
+<meta property="og:title" content="Bao Bao Club — personal shopper" />
+<meta property="og:description" content="Submete o teu pedido. Nós compramos e entregamos." />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://api.fontshare.com" />
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
 
-  <!-- ========== ECRÃ DE AUTH ========== -->
-  <div class="shell" id="auth-screen">
-    <div class="auth-wrapper">
-      <!-- Logo / Branding -->
-      <div class="auth-logo">
-        <svg width="52" height="52" viewBox="0 0 52 52" fill="none" aria-label="Bao Bao Club">
-          <circle cx="26" cy="26" r="26" fill="#ff6b00"/>
-          <ellipse cx="26" cy="28" rx="14" ry="10" fill="#1a0a00"/>
-          <circle cx="20" cy="21" r="5" fill="#fff8f2"/>
-          <circle cx="32" cy="21" r="5" fill="#fff8f2"/>
-          <circle cx="20" cy="21" r="2.5" fill="#1a0a00"/>
-          <circle cx="32" cy="21" r="2.5" fill="#1a0a00"/>
-          <ellipse cx="26" cy="29" rx="8" ry="4" fill="#ff8c3a" opacity="0.5"/>
+<div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+
+<div class="shell">
+
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 8c0-2.8 2.2-5 5-5s5 2.2 5 5v2H7V8Z"/>
+          <path d="M6 10h12l-1 10H7L6 10Z"/>
+          <path d="M10 13v4M14 13v4"/>
         </svg>
-        <h1 class="auth-brand">Bao Bao Club</h1>
-        <p class="auth-tagline">O teu clube. A tua comunidade.</p>
       </div>
-
-      <!-- Tabs Login / Registo -->
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Entrar</button>
-        <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Criar conta</button>
+      <div>
+        <p class="brand-name">Bao Bao Club</p>
+        <p class="brand-tag">Personal shopper digital</p>
       </div>
-
-      <!-- Formulário Login -->
-      <form class="auth-form" id="form-login" onsubmit="handleLogin(event)">
-        <label class="field-label" for="login-email">Email</label>
-        <input class="field-input" id="login-email" type="email" placeholder="o.teu@email.com" required />
-
-        <label class="field-label" for="login-password">Password</label>
-        <input class="field-input" id="login-password" type="password" placeholder="••••••••" required />
-
-        <div id="login-error" class="form-error hidden"></div>
-
-        <button class="primary-btn" type="submit" id="login-btn">Entrar</button>
-      </form>
-
-      <!-- Formulário Registo -->
-      <form class="auth-form hidden" id="form-signup" onsubmit="handleSignup(event)">
-        <label class="field-label" for="signup-name">Nome</label>
-        <input class="field-input" id="signup-name" type="text" placeholder="O teu nome" required />
-
-        <label class="field-label" for="signup-email">Email</label>
-        <input class="field-input" id="signup-email" type="email" placeholder="o.teu@email.com" required />
-
-        <label class="field-label" for="signup-password">Password</label>
-        <input class="field-input" id="signup-password" type="password" placeholder="mínimo 6 caracteres" required />
-
-        <div id="signup-error" class="form-error hidden"></div>
-        <div id="signup-success" class="form-success hidden"></div>
-
-        <button class="primary-btn" type="submit" id="signup-btn">Criar conta</button>
-      </form>
     </div>
-  </div>
+    <div class="header-actions">
+      <button class="chip" type="button" id="theme-toggle" aria-label="Alternar tema">Escuro</button>
+      <button class="chip" type="button" id="auth-btn">Entrar</button>
+      <button class="chip hidden" type="button" id="logout-btn">Sair</button>
+    </div>
+  </header>
 
-  <!-- ========== ECRÃ PRINCIPAL (pós-login) ========== -->
-  <div class="shell hidden" id="app-screen">
+  <main id="conteudo">
 
-    <!-- Header -->
-    <header class="app-header">
-      <div class="header-top">
-        <div class="header-logo">
-          <svg width="32" height="32" viewBox="0 0 52 52" fill="none">
-            <circle cx="26" cy="26" r="26" fill="#ff6b00"/>
-            <ellipse cx="26" cy="28" rx="14" ry="10" fill="#1a0a00"/>
-            <circle cx="20" cy="21" r="5" fill="#fff8f2"/>
-            <circle cx="32" cy="21" r="5" fill="#fff8f2"/>
-            <circle cx="20" cy="21" r="2.5" fill="#1a0a00"/>
-            <circle cx="32" cy="21" r="2.5" fill="#1a0a00"/>
-          </svg>
-          <span class="header-brand">Bao Bao Club</span>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Compras por encomenda</span>
+        <h1 class="hero-title">Compramos o que precisas, sem complicações.</h1>
+        <p class="hero-lead">Escreve o que queres, adiciona um orçamento e envia o pedido. Nós tratamos da pesquisa, da compra e do acompanhamento — tudo no mesmo sítio.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="cta-request">Criar pedido</button>
+          <button class="btn btn-ghost" id="cta-account">Ver a minha conta</button>
         </div>
-        <button class="logout-btn" onclick="handleLogout()" title="Sair">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        </button>
       </div>
-      <div class="header-welcome">
-        <p class="welcome-label">Bem-vindo de volta,</p>
-        <h2 class="welcome-name" id="user-name">Membro</h2>
+      <ol class="steps" aria-label="Como funciona">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div><strong>Descreve o pedido</strong><span>Produto, tamanho, marca ou link de referência</span></div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div><strong>Nós compramos</strong><span>Pesquisamos e confirmamos contigo se precisares</span></div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div><strong>Recebes em casa</strong><span>Acompanha o estado do pedido na tua conta</span></div>
+        </li>
+      </ol>
+    </section>
+
+    <div class="two-col">
+
+      <section class="panel" id="pedido">
+        <span class="badge">Novo pedido</span>
+        <h2 class="panel-title">Submete o teu pedido</h2>
+        <p class="panel-lead">Quanto mais específico fores, melhor conseguimos ajudar-te.</p>
+
+        <form id="request-form" novalidate>
+          <div class="field">
+            <label class="field-label" for="titulo">Título do pedido</label>
+            <input class="field-input" id="titulo" placeholder="Ex.: Ténis Nike Air Max 90" maxlength="120" required />
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label class="field-label" for="tipo">Tipo de pedido</label>
+              <select class="field-input" id="tipo" required>
+                <option value="produto">Produto</option>
+                <option value="roupa">Roupa / Tamanho</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="quantidade">Quantidade</label>
+              <input class="field-input" id="quantidade" type="number" min="1" max="99" value="1" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label class="field-label" for="tamanho">Tamanho / variante <span class="optional">(opcional)</span></label>
+              <input class="field-input" id="tamanho" placeholder="Ex.: 42, M, Azul" maxlength="60" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="orcamento">Orçamento</label>
+              <input class="field-input" id="orcamento" placeholder="Ex.: 50–100 €" maxlength="60" required />
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="link">Link de referência <span class="optional">(opcional)</span></label>
+            <input class="field-input" id="link" type="url" placeholder="https://..." maxlength="500" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="descricao">Descrição detalhada</label>
+            <textarea class="field-input" id="descricao" placeholder="Marca, modelo, cor, loja preferida, alternativas aceitáveis..." maxlength="800" required></textarea>
+            <span class="char-count" id="descricao-count">0 / 800</span>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label class="field-label" for="urgencia">Urgência</label>
+              <select class="field-input" id="urgencia">
+                <option value="normal">Normal</option>
+                <option value="urgente">Urgente</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="contacto">Contacto direto <span class="optional">(opcional)</span></label>
+              <input class="field-input" id="contacto" type="tel" placeholder="Telefone ou WhatsApp" maxlength="30" />
+            </div>
+          </div>
+          <div class="form-footer">
+            <button class="btn btn-primary" type="submit" id="submit-btn"><span>Enviar pedido</span></button>
+            <span class="form-status" id="form-status" role="status" aria-live="polite"></span>
+          </div>
+          <p class="fineprint">O pedido só é enviado depois de iniciares sessão — regista-te ou entra com a tua conta.</p>
+        </form>
+      </section>
+
+      <section class="panel" id="conta">
+        <span class="badge">Conta</span>
+        <h2 class="panel-title">Sessão e pedidos</h2>
+        <p class="panel-lead">Aqui aparece o teu estado de sessão e os teus pedidos recentes.</p>
+
+        <div class="session-card">
+          <strong id="session-label">Sessão não iniciada</strong>
+          <span id="session-meta">Entra ou regista-te para guardares os teus pedidos.</span>
+        </div>
+
+        <div class="requests-list" id="requests-list">
+          <div class="request-empty">
+            <span class="request-empty-icon" aria-hidden="true">🧾</span>
+            <strong>Ainda sem pedidos</strong>
+            <span>Depois de entrares, os teus pedidos aparecem aqui.</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <section class="panel hidden" id="admin-panel">
+      <span class="badge badge-admin">Admin</span>
+      <h2 class="panel-title">Todos os pedidos</h2>
+      <p class="panel-lead">Só visível para contas de administrador. Atualiza o estado de cada pedido conforme avança.</p>
+      <div class="admin-toolbar">
+        <button class="chip" id="admin-refresh" type="button">Atualizar lista</button>
+        <span class="form-status" id="admin-status"></span>
       </div>
-    </header>
+      <div class="requests-list" id="admin-requests-list"></div>
+    </section>
 
-    <!-- Conteúdo Principal -->
-    <main>
+  </main>
 
-      <!-- Secção: Eventos -->
-      <section class="block">
-        <h3 class="section-title">🎉 Próximos eventos</h3>
-        <div class="cards-row">
-          <div class="card event-card">
-            <span class="event-date">25 Jul</span>
-            <span class="event-name">Summer Rooftop</span>
-            <span class="event-badge green">Aberto</span>
-          </div>
-          <div class="card event-card">
-            <span class="event-date">3 Ago</span>
-            <span class="event-name">Night Pool Party</span>
-            <span class="event-badge yellow">Poucos lugares</span>
-          </div>
+  <footer class="site-footer">© Bao Bao Club</footer>
+</div>
+
+<!-- ===== MODAL DE AUTENTICAÇÃO ===== -->
+<div class="modal-backdrop hidden" id="auth-modal">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="modal-head">
+      <h3 id="auth-modal-title">Entrar no Bao Bao Club</h3>
+      <button class="modal-close" id="auth-modal-close" aria-label="Fechar">✕</button>
+    </div>
+
+    <!-- Tabs de modo -->
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" role="tab" aria-selected="true" data-mode="login" id="tab-login">Entrar</button>
+      <button class="auth-tab" role="tab" aria-selected="false" data-mode="register" id="tab-register">Registar</button>
+    </div>
+
+    <!-- MODO: Login -->
+    <form id="login-form" class="auth-form" novalidate>
+      <div class="field">
+        <label class="field-label" for="login-email">Email</label>
+        <input class="field-input" id="login-email" type="email" placeholder="o.teu@email.com" autocomplete="email" required />
+        <span class="field-error hidden" id="login-email-err"></span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="login-password">Palavra-passe</label>
+        <div class="pw-wrap">
+          <input class="field-input" id="login-password" type="password" placeholder="A tua palavra-passe" autocomplete="current-password" required />
+          <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="login-password">
+            <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
         </div>
-      </section>
+        <span class="field-error hidden" id="login-pw-err"></span>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="login-btn"><span>Entrar</span></button>
+      <button type="button" class="auth-link" id="forgot-link">Esqueci a palavra-passe</button>
+      <div id="login-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+    </form>
 
-      <!-- Secção: Benefícios -->
-      <section class="block">
-        <h3 class="section-title">⭐ Os teus benefícios</h3>
-        <div class="benefits-list">
-          <div class="benefit-item">
-            <span class="benefit-icon">🍜</span>
-            <div>
-              <p class="benefit-title">10% desconto em comida</p>
-              <p class="benefit-sub">Válido em todos os eventos</p>
-            </div>
-            <span class="benefit-arrow">›</span>
-          </div>
-          <div class="benefit-item">
-            <span class="benefit-icon">🎟</span>
-            <div>
-              <p class="benefit-title">Acesso antecipado</p>
-              <p class="benefit-sub">Compra bilhetes antes de toda a gente</p>
-            </div>
-            <span class="benefit-arrow">›</span>
-          </div>
-          <div class="benefit-item">
-            <span class="benefit-icon">🎁</span>
-            <div>
-              <p class="benefit-title">Surpresas mensais</p>
-              <p class="benefit-sub">Para membros do clube</p>
-            </div>
-            <span class="benefit-arrow">›</span>
-          </div>
+    <!-- MODO: Registo -->
+    <form id="register-form" class="auth-form hidden" novalidate>
+      <div class="field">
+        <label class="field-label" for="reg-email">Email</label>
+        <input class="field-input" id="reg-email" type="email" placeholder="o.teu@email.com" autocomplete="email" required />
+        <span class="field-error hidden" id="reg-email-err"></span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="reg-password">Palavra-passe</label>
+        <div class="pw-wrap">
+          <input class="field-input" id="reg-password" type="password" placeholder="Mín. 8 caracteres" autocomplete="new-password" required />
+          <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="reg-password">
+            <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
         </div>
-      </section>
-
-      <!-- Secção: Clube -->
-      <section class="block">
-        <h3 class="section-title">🥟 O teu estatuto</h3>
-        <div class="card status-card">
-          <div class="status-top">
-            <span class="status-level">Membro Bronze</span>
-            <span class="status-badge">🥉</span>
-          </div>
-          <div class="status-bar-wrap">
-            <div class="status-bar"><div class="status-fill" style="width: 40%"></div></div>
-          </div>
-          <p class="status-hint">400 pts para Silver</p>
+        <div class="pw-strength" id="pw-strength" aria-live="polite">
+          <div class="pw-bars"><span></span><span></span><span></span><span></span></div>
+          <span class="pw-label" id="pw-strength-label"></span>
         </div>
-      </section>
+        <ul class="pw-rules" id="pw-rules" aria-label="Requisitos da palavra-passe">
+          <li data-rule="len">Mínimo 8 caracteres</li>
+          <li data-rule="upper">Letra maiúscula</li>
+          <li data-rule="lower">Letra minúscula</li>
+          <li data-rule="num">Número</li>
+          <li data-rule="sym">Símbolo (!@#$…)</li>
+        </ul>
+        <span class="field-error hidden" id="reg-pw-err"></span>
+      </div>
+      <div class="field">
+        <label class="field-label" for="reg-confirm">Confirmar palavra-passe</label>
+        <div class="pw-wrap">
+          <input class="field-input" id="reg-confirm" type="password" placeholder="Repete a palavra-passe" autocomplete="new-password" required />
+          <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="reg-confirm">
+            <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <span class="field-error hidden" id="reg-confirm-err"></span>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="register-btn"><span>Criar conta</span></button>
+      <div id="register-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+    </form>
 
-    </main>
-
-    <!-- Bottom Nav -->
-    <nav class="bottom-nav">
-      <button class="nav-item active">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        <span>Home</span>
-      </button>
-      <button class="nav-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <span>Eventos</span>
-      </button>
-      <button class="nav-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>Pesquisa</span>
-      </button>
-      <button class="nav-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span>Perfil</span>
-      </button>
-    </nav>
+    <!-- MODO: Esqueci a password -->
+    <form id="forgot-form" class="auth-form hidden" novalidate>
+      <p class="modal-lead" style="margin-bottom:12px">Introduz o teu email e enviamos-te um link para redefinires a palavra-passe.</p>
+      <div class="field">
+        <label class="field-label" for="forgot-email">Email</label>
+        <input class="field-input" id="forgot-email" type="email" placeholder="o.teu@email.com" autocomplete="email" required />
+        <span class="field-error hidden" id="forgot-email-err"></span>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="forgot-btn"><span>Enviar link de recuperação</span></button>
+      <button type="button" class="auth-link" id="back-to-login">← Voltar ao login</button>
+      <div id="forgot-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+    </form>
 
   </div>
+</div>
 
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
