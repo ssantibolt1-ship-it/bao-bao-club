@@ -41,6 +41,8 @@ const openRequestModalBtn = document.getElementById('open-request-modal-btn');
 const pedidosHeaderNewBtn = document.getElementById('pedidos-header-new-btn');
 const requestModal      = document.getElementById('request-modal');
 const requestModalClose = document.getElementById('request-modal-close');
+const accountModal      = document.getElementById('account-modal');
+const accountModalClose = document.getElementById('account-modal-close');
 const termsModal        = document.getElementById('terms-modal');
 const termsModalClose   = document.getElementById('terms-modal-close');
 const footerTerms       = document.getElementById('footer-terms');
@@ -97,12 +99,10 @@ async function getSession() {
 function showView(viewName) {
   const isOrders = viewName === 'orders';
   const pageOrders = document.getElementById('page-orders');
-  const pageAccount = document.getElementById('page-account');
   const navBtnOrders = document.getElementById('nav-btn-orders');
   const navBtnAccount = document.getElementById('nav-btn-account');
 
   if (pageOrders)  pageOrders.classList.toggle('hidden', !isOrders);
-  if (pageAccount) pageAccount.classList.toggle('hidden', isOrders);
 
   if (navBtnOrders) {
     navBtnOrders.classList.toggle('active', isOrders);
@@ -113,12 +113,36 @@ function showView(viewName) {
     navBtnAccount.setAttribute('aria-selected', !isOrders ? 'true' : 'false');
   }
 
+  if (isOrders) {
+    closeAccountModal();
+  } else {
+    openAccountModal();
+  }
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openAccountModal() {
+  if (accountModal) {
+    accountModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeAccountModal() {
+  if (accountModal) {
+    accountModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
 }
 
 document.getElementById('nav-btn-orders')?.addEventListener('click', () => showView('orders'));
 document.getElementById('nav-btn-account')?.addEventListener('click', () => showView('account'));
-document.getElementById('account-back-btn')?.addEventListener('click', () => showView('orders'));
+document.getElementById('account-back-btn')?.addEventListener('click', () => closeAccountModal());
+
+// Account modal event listeners
+if (accountModalClose) accountModalClose.addEventListener('click', closeAccountModal);
+if (accountModal) accountModal.addEventListener('click', (e) => { if (e.target === accountModal) closeAccountModal(); });
 
 // ── Atalhos de navegação e Dropdown do Header ───────────────────────
 document.getElementById('cta-request')?.addEventListener('click', (e) => {
@@ -165,7 +189,7 @@ if (dropdownAccountSettings) {
   dropdownAccountSettings.addEventListener('click', () => {
     userDropdown.classList.add('hidden');
     userMenuWrapper.classList.remove('open');
-    showView('account');
+    openAccountModal();
   });
 }
 
