@@ -372,8 +372,8 @@ function closeTermsModal() {
   document.body.style.overflow = '';
 }
 
-if (openRequestModalBtn) openRequestModalBtn.addEventListener('click', openRequestModal);
-if (pedidosHeaderNewBtn) pedidosHeaderNewBtn.addEventListener('click', openRequestModal);
+if (openRequestModalBtn) openRequestModalBtn.addEventListener('click', (e) => { e.preventDefault(); openRequestModal(); });
+if (pedidosHeaderNewBtn) pedidosHeaderNewBtn.addEventListener('click', (e) => { e.preventDefault(); openRequestModal(); });
 if (dropdownNewRequest) {
   dropdownNewRequest.addEventListener('click', () => {
     if (userDropdown) userDropdown.classList.add('hidden');
