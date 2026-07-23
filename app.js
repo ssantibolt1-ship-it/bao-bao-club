@@ -337,8 +337,9 @@ authModalClose.addEventListener('click', closeAuthModal);
 authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAuthModal(); });
 
 // ── Modals: Novo Pedido e Termos ──────────────────────────────────
-function openRequestModal() {
-  if (!cachedSession) {
+async function openRequestModal() {
+  const session = await getSession();
+  if (!session) {
     openAuthModal('login');
     return;
   }
