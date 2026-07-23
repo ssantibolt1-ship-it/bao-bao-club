@@ -337,20 +337,24 @@ authModalClose.addEventListener('click', closeAuthModal);
 authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAuthModal(); });
 
 // ── Modals: Novo Pedido e Termos ──────────────────────────────────
+let isOpeningModal = false;
+
 async function openRequestModal() {
-  if (!requestModal) {
-    console.error('Request modal element not found');
+  if (isOpeningModal || !requestModal) {
     return;
   }
+  isOpeningModal = true;
+  
   const session = await getSession();
   if (!session) {
-    console.log('No session, opening login');
     openAuthModal('login');
+    isOpeningModal = false;
     return;
   }
-  console.log('Opening request modal');
+  
   requestModal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+  isOpeningModal = false;
 }
 
 function closeRequestModal() {
@@ -376,10 +380,11 @@ function closeTermsModal() {
   document.body.style.overflow = '';
 }
 
-if (openRequestModalBtn) openRequestModalBtn.addEventListener('click', (e) => { e.preventDefault(); openRequestModal(); });
-if (pedidosHeaderNewBtn) pedidosHeaderNewBtn.addEventListener('click', (e) => { e.preventDefault(); openRequestModal(); });
+if (openRequestModalBtn) openRequestModalBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openRequestModal(); });
+if (pedidosHeaderNewBtn) pedidosHeaderNewBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openRequestModal(); });
 if (dropdownNewRequest) {
-  dropdownNewRequest.addEventListener('click', () => {
+  dropdownNewRequest.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (userDropdown) userDropdown.classList.add('hidden');
     if (userMenuWrapper) userMenuWrapper.classList.remove('open');
     openRequestModal();
