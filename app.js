@@ -976,8 +976,12 @@ async function loadAdminRequests() {
 adminRefreshBtn.addEventListener('click', loadAdminRequests);
 
 // ── Arranque ───────────────────────────────────────────────────────
-initSession();
+(async () => {
+  await initSession();
+})();
+
 async function initSession() {
-  await getSession();
+  const session = await getSession();
+  cachedSession = session; // Ensure cache is set
   renderSession();
 }
