@@ -30,6 +30,7 @@ const userDropdown      = document.getElementById('user-dropdown');
 const dropdownUserEmail = document.getElementById('dropdown-user-email');
 const dropdownMyOrders  = document.getElementById('dropdown-my-orders');
 const dropdownNewRequest= document.getElementById('dropdown-new-request');
+const dropdownAccountSettings = document.getElementById('dropdown-account-settings');
 const heroCopy          = document.getElementById('hero-copy');
 
 // Banner & Modals
