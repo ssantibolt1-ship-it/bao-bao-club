@@ -341,6 +341,7 @@ let isOpeningModal = false;
 
 async function openRequestModal() {
   if (isOpeningModal || !requestModal) {
+    alert('Cannot open: isOpeningModal=' + isOpeningModal + ', requestModal=' + !!requestModal);
     return;
   }
   isOpeningModal = true;
@@ -352,7 +353,9 @@ async function openRequestModal() {
     return;
   }
   
+  alert('About to remove hidden class. Current classes: ' + requestModal.className);
   requestModal.classList.remove('hidden');
+  alert('Hidden class removed. New classes: ' + requestModal.className);
   document.body.style.overflow = 'hidden';
   isOpeningModal = false;
 }
