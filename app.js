@@ -337,27 +337,38 @@ authModalClose.addEventListener('click', closeAuthModal);
 authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAuthModal(); });
 
 // ── Modals: Novo Pedido e Termos ──────────────────────────────────
-let isOpeningModal = false;
-
 async function openRequestModal() {
-  if (isOpeningModal || !requestModal) {
-    alert('Cannot open: isOpeningModal=' + isOpeningModal + ', requestModal=' + !!requestModal);
-    return;
-  }
-  isOpeningModal = true;
-  
-  const session = await getSession();
-  if (!session) {
-    openAuthModal('login');
+  try {
+    if (isOpeningModal || !requestModal) {
+      alert('Cannot open: isOpeningModal=' + isOpeningModal + ', requestModal=' + !!requestModal);
+      return;
+    }
+    isOpeningModal = true;
+    
+    const session = await getSession();
+    if (!session) {
+      openAuthModal('login');
+      isOpeningModal = false;
+      return;
+    }
+    
+    alert('Step 1: About to remove hidden class');
+    requestModal.classList.remove('hidden');
+    alert('Step 2: Hidden class removed');
+    
+    // Force display as fallback
+    requestModal.style.display = 'flex';
+    alert('Step 3: Set inline display:flex');
+    
+    document.body.style.overflow = 'hidden';
+    alert('Step 4: Overflow hidden set');
+    
     isOpeningModal = false;
-    return;
+    alert('Step 5: Done! Modal should be visible now');
+  } catch (error) {
+    alert('ERROR: ' + error.message);
+    isOpeningModal = false;
   }
-  
-  alert('About to remove hidden class. Current classes: ' + requestModal.className);
-  requestModal.classList.remove('hidden');
-  alert('Hidden class removed. New classes: ' + requestModal.className);
-  document.body.style.overflow = 'hidden';
-  isOpeningModal = false;
 }
 
 function closeRequestModal() {
