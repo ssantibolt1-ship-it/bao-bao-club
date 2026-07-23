@@ -604,12 +604,21 @@ select.field-input { appearance: none; background-image: url("data:image/svg+xml
   background: rgba(10, 8, 5, 0.75);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  display: flex !important; align-items: center; justify-content: center; padding: var(--space-4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
   animation: fade-in 180ms ease;
 }
+
+.modal-backdrop:not(.hidden) {
+  display: flex !important;
+}
+
 .modal-backdrop.hidden {
   display: none !important;
 }
+
 [data-theme="light"] .modal-backdrop {
   background: rgba(30, 23, 16, 0.45);
 }

@@ -340,26 +340,19 @@ authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAu
 let isOpeningModal = false;
 
 async function openRequestModal() {
-  console.log('openRequestModal called, isOpeningModal:', isOpeningModal, 'requestModal:', !!requestModal);
   if (isOpeningModal || !requestModal) {
-    console.log('Returning early - isOpeningModal or no requestModal');
     return;
   }
   isOpeningModal = true;
   
   const session = await getSession();
-  console.log('Session:', !!session);
   if (!session) {
-    console.log('No session, opening auth modal');
     openAuthModal('login');
     isOpeningModal = false;
     return;
   }
   
-  console.log('Removing hidden class from requestModal');
-  console.log('Before:', requestModal.className);
   requestModal.classList.remove('hidden');
-  console.log('After:', requestModal.className);
   document.body.style.overflow = 'hidden';
   isOpeningModal = false;
 }
