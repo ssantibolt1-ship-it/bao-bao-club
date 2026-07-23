@@ -530,10 +530,7 @@ logoutBtn.addEventListener('click', async () => {
 });
 
 // ── Sessão ────────────────────────────────────────────────────────
-async function getSession() {
-  const { data } = await sb.auth.getSession();
-  return data.session || null;
-}
+// getSession() already defined above with caching
 
 async function renderSession() {
   const session = await getSession();
@@ -746,6 +743,7 @@ if (profilePwForm) {
 }
 
 sb.auth.onAuthStateChange((_event, session) => {
+  cachedSession = session; // Update cache when auth state changes
   renderSession();
   if (session) closeAuthModal();
 });
