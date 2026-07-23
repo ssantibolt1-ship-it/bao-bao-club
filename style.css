@@ -1202,10 +1202,11 @@ select.field-input { appearance: none; background-image: url("data:image/svg+xml
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-xl);
-  max-width: 600px;
+  max-width: 90vw;
   width: 100%;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
+  padding: var(--space-6);
 }
 
 #page-account:not(.hidden) .account-page-header {

@@ -338,15 +338,19 @@ authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAu
 
 // ── Modals: Novo Pedido e Termos ──────────────────────────────────
 async function openRequestModal() {
+  if (!requestModal) {
+    console.error('Request modal element not found');
+    return;
+  }
   const session = await getSession();
   if (!session) {
+    console.log('No session, opening login');
     openAuthModal('login');
     return;
   }
-  if (requestModal) {
-    requestModal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
+  console.log('Opening request modal');
+  requestModal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeRequestModal() {
