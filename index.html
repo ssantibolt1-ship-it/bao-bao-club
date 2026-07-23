@@ -205,16 +205,18 @@
       </div>
 
       <!-- VISTA 2: PÁGINA DEDICADA "A MINHA CONTA" -->
-<div class="modal-backdrop hidden" id="account-modal">
-  <div class="modal-card modal-card-lg" role="dialog" aria-modal="true" aria-labelledby="account-title">
-    <button class="modal-close" id="account-modal-close" aria-label="Fechar modal">✕</button>
-    <div class="modal-header">
-      <span class="badge">Perfil & Segurança</span>
-      <h3 id="account-title" class="modal-title-text">A minha conta</h3>
-      <p class="panel-lead">Gere os teus dados de perfil, altera o email de contacto e atualiza a tua palavra-passe com total segurança.</p>
-    </div>
+      <div class="page-view hidden" id="page-account">
+        <article class="panel page-account-panel" aria-labelledby="account-title">
+          <div class="account-page-header">
+            <div>
+              <button class="btn btn-ghost btn-sm" type="button" id="account-back-btn" style="margin-bottom: 8px;">← Voltar às encomendas</button>
+              <span class="badge">Perfil & Segurança</span>
+              <h1 class="panel-title" id="account-title" style="font-size: var(--text-2xl); margin-top: 6px;">A minha conta</h1>
+            </div>
+          </div>
+          <p class="panel-lead">Gere os teus dados de perfil, altera o email de contacto e atualiza a tua palavra-passe com total segurança.</p>
 
-    <div class="account-grid">
+          <div class="account-grid">
 
             <!-- Secção Nome / Perfil -->
             <div class="account-card">
@@ -302,11 +304,8 @@
             </div>
 
           </div>
-        </div>
+        </article>
       </div>
-    </div>
-  </div>
-</div>
 
     <!-- ADMIN -->
     <section class="panel hidden" id="admin-panel" aria-labelledby="admin-title">
