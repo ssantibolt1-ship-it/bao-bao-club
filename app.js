@@ -977,39 +977,8 @@ async function loadAdminRequests() {
 adminRefreshBtn.addEventListener('click', loadAdminRequests);
 
 // ── Arranque ───────────────────────────────────────────────────────
-renderSession();
-
-// ── Guard global: abre modal de login ao clicar em qualquer botão ou link
-//    quando o utilizador NÃO está autenticado (excepto elementos data-auth-exempt)
-document.addEventListener('click', (e) => {
-  // Ignorar cliques dentro dos modais ou menu de utilizador
-  if (authModal && !authModal.classList.contains('hidden')) return;
-  if (requestModal && !requestModal.classList.contains('hidden')) return;
-  if (termsModal && !termsModal.classList.contains('hidden')) return;
-
-  // Determinar o elemento clicável mais próximo
-  const target = e.target.closest('button, a[href], [role="button"]');
-  if (!target) return;
-
-  // Elementos isentos do guard
-  if (target.hasAttribute('data-auth-exempt')) return;
-  if (target.id === 'theme-toggle') return;
-  if (target.id === 'auth-btn') return;
-  if (target.id === 'auth-modal-close') return;
-  if (target.id === 'request-modal-close') return;
-  if (target.id === 'terms-modal-close') return;
-  if (target.closest('#auth-modal')) return;
-  if (target.closest('#request-modal')) return;
-  if (target.closest('#terms-modal')) return;
-  if (target.closest('#user-menu-wrapper')) return;
-
-  // Links externos (mailto, tel, etc.) — deixar passar
-  const href = target.getAttribute('href') || '';
-  if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http')) return;
-
-  if (!cachedSession) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    openAuthModal('login');
-  }
-}, true); // capture = true para intercepção antecipada
+initSession();
+async function initSession() {
+  await getSession();
+  renderSession();
+}
