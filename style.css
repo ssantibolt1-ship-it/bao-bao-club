@@ -600,7 +600,7 @@ select.field-input { appearance: none; background-image: url("data:image/svg+xml
 /* ============ AUTH MODAL ============ */
 
 .modal-backdrop {
-  position: fixed; inset: 0; z-index: 990;
+  position: fixed; inset: 0; z-index: 9999;
   background: rgba(10, 8, 5, 0.75);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -1284,7 +1284,7 @@ select.field-input { appearance: none; background-image: url("data:image/svg+xml
 
 .modal-card-lg {
   max-width: 620px;
-  max-height: 90vh;
+  max-height: 95vh;
   overflow-y: auto;
 }
 
