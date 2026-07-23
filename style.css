@@ -685,3 +685,139 @@ select.field-input { appearance: none; background-image: url("data:image/svg+xml
   .panel:hover { transform: none; box-shadow: var(--shadow-sm); }
   .chip:hover, .btn:hover { transform: none; box-shadow: none; }
 }
+
+/* ============ USER DROPDOWN (HEADER) ============ */
+.user-menu-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.chip-user {
+  background: var(--surface-2);
+  border-color: var(--border);
+  font-weight: 600;
+  padding: var(--space-2) var(--space-4);
+  gap: var(--space-2);
+}
+.chip-user:hover {
+  background: var(--surface-3);
+  border-color: var(--accent);
+}
+.user-avatar-icon {
+  font-size: 1.1em;
+}
+.user-email-text {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-chevron {
+  font-size: 0.85em;
+  color: var(--muted);
+  transition: transform var(--ease);
+}
+.user-menu-wrapper.open .user-chevron {
+  transform: rotate(180deg);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 250px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  animation: dropdown-fade-in 180ms var(--ease);
+}
+
+@keyframes dropdown-fade-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.user-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+}
+.user-dropdown-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.user-dropdown-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.user-dropdown-info strong {
+  font-size: var(--text-xs);
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-dropdown-status {
+  font-size: 0.75rem;
+  color: var(--success);
+  font-weight: 500;
+}
+
+.user-dropdown-divider {
+  height: 1px;
+  background: var(--divider);
+  margin: var(--space-1) 0;
+}
+
+.user-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--ease), color var(--ease);
+  text-align: left;
+}
+.user-dropdown-item:hover {
+  background: var(--surface-2);
+  color: var(--accent);
+}
+.user-dropdown-item.danger {
+  color: var(--danger);
+}
+.user-dropdown-item.danger:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* ============ HERO ADAPTATION ON LOGIN ============ */
+.hero-copy.hidden {
+  display: none !important;
+}
+.hero:has(.hero-copy.hidden) {
+  grid-template-columns: 1fr;
+}
+

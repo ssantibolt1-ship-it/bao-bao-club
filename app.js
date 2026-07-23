@@ -10,8 +10,6 @@ const authBtn         = document.getElementById('auth-btn');
 const logoutBtn       = document.getElementById('logout-btn');
 const authModal       = document.getElementById('auth-modal');
 const authModalClose  = document.getElementById('auth-modal-close');
-const sessionLabel    = document.getElementById('session-label');
-const sessionMeta     = document.getElementById('session-meta');
 const requestsList    = document.getElementById('requests-list');
 const requestForm     = document.getElementById('request-form');
 const submitBtn       = document.getElementById('submit-btn');
@@ -23,6 +21,15 @@ const adminStatusEl   = document.getElementById('admin-status');
 const adminRefreshBtn = document.getElementById('admin-refresh');
 const descricaoEl     = document.getElementById('descricao');
 const descricaoCount  = document.getElementById('descricao-count');
+
+// Dropdown e User Header
+const userMenuWrapper   = document.getElementById('user-menu-wrapper');
+const userMenuBtn       = document.getElementById('user-menu-btn');
+const userMenuEmail     = document.getElementById('user-menu-email');
+const userDropdown      = document.getElementById('user-dropdown');
+const dropdownUserEmail = document.getElementById('dropdown-user-email');
+const dropdownMyOrders  = document.getElementById('dropdown-my-orders');
+const heroCopy          = document.getElementById('hero-copy');
 
 // Auth forms / elements
 const loginForm      = document.getElementById('login-form');
@@ -58,12 +65,43 @@ function applyTheme(t) {
 applyTheme(theme);
 themeToggle.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark'));
 
-// ── Atalhos de navegação ──────────────────────────────────────────
-document.getElementById('cta-request').addEventListener('click', () => {
-  document.getElementById('pedido').scrollIntoView({ behavior: 'smooth' });
+// ── Atalhos de navegação e Dropdown do Header ───────────────────────
+document.getElementById('cta-request')?.addEventListener('click', () => {
+  document.getElementById('pedido')?.scrollIntoView({ behavior: 'smooth' });
 });
-document.getElementById('cta-account').addEventListener('click', () => {
-  document.getElementById('conta').scrollIntoView({ behavior: 'smooth' });
+document.getElementById('cta-account')?.addEventListener('click', async () => {
+  const session = await getSession();
+  if (session) {
+    document.getElementById('meus-pedidos')?.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    openAuthModal('login');
+  }
+});
+
+// Toggle do Dropdown do Utilizador
+if (userMenuBtn) {
+  userMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = userDropdown.classList.contains('hidden');
+    userDropdown.classList.toggle('hidden', !isHidden);
+    userMenuWrapper.classList.toggle('open', isHidden);
+    userMenuBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+  });
+}
+
+if (dropdownMyOrders) {
+  dropdownMyOrders.addEventListener('click', () => {
+    userDropdown.classList.add('hidden');
+    userMenuWrapper.classList.remove('open');
+    document.getElementById('meus-pedidos')?.scrollIntoView({ behavior: 'smooth' });
+  });
+}
+
+document.addEventListener('click', (e) => {
+  if (userMenuWrapper && !userMenuWrapper.contains(e.target)) {
+    userDropdown.classList.add('hidden');
+    userMenuWrapper.classList.remove('open');
+  }
 });
 
 // ── Contador de caracteres ────────────────────────────────────────
@@ -346,6 +384,8 @@ forgotForm.addEventListener('submit', async (e) => {
 });
 
 logoutBtn.addEventListener('click', async () => {
+  if (userDropdown) userDropdown.classList.add('hidden');
+  if (userMenuWrapper) userMenuWrapper.classList.remove('open');
   await sb.auth.signOut();
   toast('Sessão terminada.');
 });
@@ -359,22 +399,32 @@ async function getSession() {
 async function renderSession() {
   const session = await getSession();
   if (session?.user) {
-    sessionLabel.textContent = session.user.email || 'Sessão iniciada';
-    sessionMeta.textContent = 'Tens acesso ao envio de pedidos.';
+    // 1. Ocultar hero-copy após login
+    if (heroCopy) heroCopy.classList.add('hidden');
+
+    // 2. Apresentar utilizador no dropdown do header
     authBtn.classList.add('hidden');
-    logoutBtn.classList.remove('hidden');
+    if (userMenuWrapper) userMenuWrapper.classList.remove('hidden');
+    if (userMenuEmail) userMenuEmail.textContent = session.user.email || 'Utilizador';
+    if (dropdownUserEmail) dropdownUserEmail.textContent = session.user.email || '';
+
+    // 3. Carregar pedidos na secção principal
     loadRequests(session.user.id);
     checkAdmin();
   } else {
-    sessionLabel.textContent = 'Sessão não iniciada';
-    sessionMeta.textContent = 'Entra ou regista-te para guardares os teus pedidos.';
+    // Mostrar hero-copy se não autenticado
+    if (heroCopy) heroCopy.classList.remove('hidden');
+
     authBtn.classList.remove('hidden');
-    logoutBtn.classList.add('hidden');
+    if (userMenuWrapper) userMenuWrapper.classList.add('hidden');
+    if (userDropdown) userDropdown.classList.add('hidden');
+    if (userMenuWrapper) userMenuWrapper.classList.remove('open');
+
     requestsList.innerHTML = `
       <div class="request-empty">
         <span class="request-empty-icon" aria-hidden="true">🧾</span>
         <strong>Ainda sem pedidos</strong>
-        <span>Depois de entrares, os teus pedidos aparecem aqui.</span>
+        <span>Inicia sessão para consultares o estado dos teus pedidos.</span>
       </div>`;
     adminPanel.classList.add('hidden');
   }
