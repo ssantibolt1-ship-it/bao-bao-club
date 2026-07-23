@@ -150,158 +150,162 @@
     <!-- APLICAÇÃO (LOGADO) -->
     <div class="app-dashboard hidden" id="app-content">
 
-      <!-- BANNER BOAS-VINDAS -->
-      <section class="welcome-banner" id="welcome-banner" aria-label="Área de cliente">
-        <div class="welcome-glow" aria-hidden="true"></div>
-        <div class="welcome-main">
-          <span class="welcome-badge" id="welcome-badge">Área de cliente</span>
-          <h2 class="welcome-title" id="welcome-title">Bem-vindo de volta! 👋</h2>
-          <p class="welcome-subtitle" id="welcome-subtitle">Acompanha aqui o estado das tuas encomendas em tempo real ou cria um novo pedido de compra.</p>
-        </div>
-        <div class="welcome-action">
-          <button class="btn btn-primary btn-lg welcome-cta" type="button" id="open-request-modal-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-            Fazer pedido
-          </button>
-        </div>
-      </section>
-
-      <!-- SEPARADORES DE NAVEGAÇÃO -->
-      <div class="dash-tabs" role="tablist" aria-label="Separadores da área de cliente">
-        <button class="dash-tab active" type="button" role="tab" id="tab-orders" aria-selected="true" data-tab="orders">
+      <!-- SUB-NAVEGAÇÃO SUPERIOR DA ÁREA DE CLIENTE -->
+      <nav class="app-subnav" aria-label="Navegação de secções">
+        <button class="subnav-btn active" type="button" id="nav-btn-orders">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Os meus pedidos
+          As minhas encomendas
         </button>
-        <button class="dash-tab" type="button" role="tab" id="tab-account" aria-selected="false" data-tab="account">
+        <button class="subnav-btn" type="button" id="nav-btn-account">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Definições da conta
+          A minha conta
         </button>
+      </nav>
+
+      <!-- VISTA 1: PÁGINA DE ENCOMENDAS -->
+      <div class="page-view" id="page-orders">
+        <!-- BANNER BOAS-VINDAS -->
+        <section class="welcome-banner" id="welcome-banner" aria-label="Área de cliente">
+          <div class="welcome-glow" aria-hidden="true"></div>
+          <div class="welcome-main">
+            <span class="welcome-badge" id="welcome-badge">Área de cliente</span>
+            <h2 class="welcome-title" id="welcome-title">Bem-vindo de volta! 👋</h2>
+            <p class="welcome-subtitle" id="welcome-subtitle">Acompanha aqui o estado das tuas encomendas em tempo real ou cria um novo pedido de compra.</p>
+          </div>
+          <div class="welcome-action">
+            <button class="btn btn-primary btn-lg welcome-cta" type="button" id="open-request-modal-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Fazer pedido
+            </button>
+          </div>
+        </section>
+
+        <!-- PEDIDOS DO UTILIZADOR -->
+        <article class="panel" id="meus-pedidos" aria-labelledby="pedidos-title">
+          <div class="panel-header-bar">
+            <div>
+              <span class="badge">Acompanhamento</span>
+              <h2 class="panel-title" id="pedidos-title">Os teus pedidos</h2>
+            </div>
+            <button class="btn btn-primary btn-sm" type="button" id="pedidos-header-new-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              Novo pedido
+            </button>
+          </div>
+          <p class="panel-lead">Estado em tempo real das tuas encomendas.</p>
+
+          <div class="requests-list" id="requests-list" role="list">
+            <div class="request-empty" role="listitem">
+              <span class="request-empty-icon" aria-hidden="true">🧾</span>
+              <strong>Ainda sem pedidos</strong>
+              <span>Clica em "Fazer pedido" para submeteres o teu primeiro pedido.</span>
+            </div>
+          </div>
+        </article>
       </div>
 
-      <!-- SEPARADOR 1: PEDIDOS DO UTILIZADOR -->
-      <article class="panel tab-content" id="tab-panel-orders" aria-labelledby="pedidos-title">
-        <div class="panel-header-bar">
-          <div>
-            <span class="badge">Acompanhamento</span>
-            <h2 class="panel-title" id="pedidos-title">Os teus pedidos</h2>
+      <!-- VISTA 2: PÁGINA DEDICADA "A MINHA CONTA" -->
+      <div class="page-view hidden" id="page-account">
+        <article class="panel page-account-panel" aria-labelledby="account-title">
+          <div class="account-page-header">
+            <div>
+              <button class="btn btn-ghost btn-sm" type="button" id="account-back-btn" style="margin-bottom: 8px;">← Voltar às encomendas</button>
+              <span class="badge">Perfil & Segurança</span>
+              <h1 class="panel-title" id="account-title" style="font-size: var(--text-2xl); margin-top: 6px;">A minha conta</h1>
+            </div>
           </div>
-          <button class="btn btn-primary btn-sm" type="button" id="pedidos-header-new-btn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-            Novo pedido
-          </button>
-        </div>
-        <p class="panel-lead">Estado em tempo real das tuas encomendas.</p>
+          <p class="panel-lead">Gere os teus dados de perfil, altera o email de contacto e atualiza a tua palavra-passe com total segurança.</p>
 
-        <div class="requests-list" id="requests-list" role="list">
-          <div class="request-empty" role="listitem">
-            <span class="request-empty-icon" aria-hidden="true">🧾</span>
-            <strong>Ainda sem pedidos</strong>
-            <span>Clica em "Fazer pedido" para submeteres o teu primeiro pedido.</span>
-          </div>
-        </div>
-      </article>
+          <div class="account-grid">
 
-      <!-- SEPARADOR 2: DEFINIÇÕES DA CONTA -->
-      <article class="panel tab-content hidden" id="tab-panel-account" aria-labelledby="account-title">
-        <div class="panel-header-bar">
-          <div>
-            <span class="badge">Perfil & Segurança</span>
-            <h2 class="panel-title" id="account-title">Definições da conta</h2>
-          </div>
-        </div>
-        <p class="panel-lead">Gere as tuas informações pessoais, email e palavra-passe num só lugar.</p>
-
-        <div class="account-grid">
-
-          <!-- Secção Nome / Perfil -->
-          <div class="account-card">
-            <h3 class="account-card-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              Nome de utilizador
-            </h3>
-            <form id="profile-name-form" novalidate>
-              <div class="field">
-                <label class="field-label" for="profile-name-input">Nome completo / Perfil</label>
-                <input class="field-input" id="profile-name-input" type="text" placeholder="O teu nome" autocomplete="name" required />
-                <span class="field-error hidden" id="profile-name-err" role="alert"></span>
-              </div>
-              <div class="form-footer" style="margin-top: 10px;">
-                <button class="btn btn-primary btn-sm" type="submit" id="save-name-btn"><span>Guardar nome</span></button>
-                <div id="save-name-note" class="modal-note hidden" role="status" aria-live="polite"></div>
-              </div>
-            </form>
-          </div>
-
-          <!-- Secção Email -->
-          <div class="account-card">
-            <h3 class="account-card-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              Endereço de email
-            </h3>
-            <form id="profile-email-form" novalidate>
-              <div class="field">
-                <label class="field-label" for="profile-email-input">Novo endereço de email</label>
-                <input class="field-input" id="profile-email-input" type="email" placeholder="o.teu@email.com" autocomplete="email" required />
-                <span class="field-error hidden" id="profile-email-err" role="alert"></span>
-              </div>
-              <div class="form-footer" style="margin-top: 10px;">
-                <button class="btn btn-primary btn-sm" type="submit" id="save-email-btn"><span>Atualizar email</span></button>
-                <div id="save-email-note" class="modal-note hidden" role="status" aria-live="polite"></div>
-              </div>
-            </form>
-          </div>
-
-          <!-- Secção Palavra-passe -->
-          <div class="account-card full-width">
-            <h3 class="account-card-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              Alterar palavra-passe
-            </h3>
-            <form id="profile-password-form" novalidate>
-              <div class="form-row">
+            <!-- Secção Nome / Perfil -->
+            <div class="account-card">
+              <h3 class="account-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Nome de utilizador
+              </h3>
+              <form id="profile-name-form" novalidate>
                 <div class="field">
-                  <label class="field-label" for="profile-new-pw">Nova palavra-passe</label>
-                  <div class="pw-wrap">
-                    <input class="field-input" id="profile-new-pw" type="password" placeholder="Mín. 8 caracteres" autocomplete="new-password" required />
-                    <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="profile-new-pw">
-                      <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
-                  </div>
-                  <span class="field-error hidden" id="profile-new-pw-err" role="alert"></span>
+                  <label class="field-label" for="profile-name-input">Nome completo / Perfil</label>
+                  <input class="field-input" id="profile-name-input" type="text" placeholder="O teu nome" autocomplete="name" required />
+                  <span class="field-error hidden" id="profile-name-err" role="alert"></span>
                 </div>
+                <div class="form-footer" style="margin-top: 10px;">
+                  <button class="btn btn-primary btn-sm" type="submit" id="save-name-btn"><span>Guardar nome</span></button>
+                  <div id="save-name-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Secção Email -->
+            <div class="account-card">
+              <h3 class="account-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Endereço de email
+              </h3>
+              <form id="profile-email-form" novalidate>
                 <div class="field">
-                  <label class="field-label" for="profile-confirm-pw">Confirmar palavra-passe</label>
-                  <div class="pw-wrap">
-                    <input class="field-input" id="profile-confirm-pw" type="password" placeholder="Repete a palavra-passe" autocomplete="new-password" required />
-                    <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="profile-confirm-pw">
-                      <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
-                  </div>
-                  <span class="field-error hidden" id="profile-confirm-pw-err" role="alert"></span>
+                  <label class="field-label" for="profile-email-input">Novo endereço de email</label>
+                  <input class="field-input" id="profile-email-input" type="email" placeholder="o.teu@email.com" autocomplete="email" required />
+                  <span class="field-error hidden" id="profile-email-err" role="alert"></span>
                 </div>
-              </div>
-              <div class="pw-strength" id="profile-pw-strength" aria-live="polite">
-                <div class="pw-bars"><span></span><span></span><span></span><span></span></div>
-                <span class="pw-label" id="profile-pw-strength-label"></span>
-              </div>
-              <ul class="pw-rules" id="profile-pw-rules" aria-label="Requisitos da palavra-passe">
-                <li data-rule="len">Mínimo 8 caracteres</li>
-                <li data-rule="upper">Letra maiúscula</li>
-                <li data-rule="lower">Letra minúscula</li>
-                <li data-rule="num">Número</li>
-                <li data-rule="sym">Símbolo (!@#$…)</li>
-              </ul>
-              <div class="form-footer" style="margin-top: 12px;">
-                <button class="btn btn-primary btn-sm" type="submit" id="save-pw-btn"><span>Alterar palavra-passe</span></button>
-                <div id="save-pw-note" class="modal-note hidden" role="status" aria-live="polite"></div>
-              </div>
-            </form>
+                <div class="form-footer" style="margin-top: 10px;">
+                  <button class="btn btn-primary btn-sm" type="submit" id="save-email-btn"><span>Atualizar email</span></button>
+                  <div id="save-email-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Secção Palavra-passe -->
+            <div class="account-card full-width">
+              <h3 class="account-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Alterar palavra-passe
+              </h3>
+              <form id="profile-password-form" novalidate>
+                <div class="form-row">
+                  <div class="field">
+                    <label class="field-label" for="profile-new-pw">Nova palavra-passe</label>
+                    <div class="pw-wrap">
+                      <input class="field-input" id="profile-new-pw" type="password" placeholder="Mín. 8 caracteres" autocomplete="new-password" required />
+                      <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="profile-new-pw">
+                        <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      </button>
+                    </div>
+                    <span class="field-error hidden" id="profile-new-pw-err" role="alert"></span>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="profile-confirm-pw">Confirmar palavra-passe</label>
+                    <div class="pw-wrap">
+                      <input class="field-input" id="profile-confirm-pw" type="password" placeholder="Repete a palavra-passe" autocomplete="new-password" required />
+                      <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="profile-confirm-pw">
+                        <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      </button>
+                    </div>
+                    <span class="field-error hidden" id="profile-confirm-pw-err" role="alert"></span>
+                  </div>
+                </div>
+                <div class="pw-strength" id="profile-pw-strength" aria-live="polite">
+                  <div class="pw-bars"><span></span><span></span><span></span><span></span></div>
+                  <span class="pw-label" id="profile-pw-strength-label"></span>
+                </div>
+                <ul class="pw-rules" id="profile-pw-rules" aria-label="Requisitos da palavra-passe">
+                  <li data-rule="len">Mínimo 8 caracteres</li>
+                  <li data-rule="upper">Letra maiúscula</li>
+                  <li data-rule="lower">Letra minúscula</li>
+                  <li data-rule="num">Número</li>
+                  <li data-rule="sym">Símbolo (!@#$…)</li>
+                </ul>
+                <div class="form-footer" style="margin-top: 12px;">
+                  <button class="btn btn-primary btn-sm" type="submit" id="save-pw-btn"><span>Alterar palavra-passe</span></button>
+                  <div id="save-pw-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+                </div>
+              </form>
+            </div>
+
           </div>
-
-        </div>
-      </article>
-
-    </div>
+        </article>
+      </div>
 
     <!-- ADMIN -->
     <section class="panel hidden" id="admin-panel" aria-labelledby="admin-title">

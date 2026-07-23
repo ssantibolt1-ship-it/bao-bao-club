@@ -78,35 +78,50 @@ function applyTheme(t) {
 applyTheme(theme);
 themeToggle.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark'));
 
-// ── Gestão de Separadores da Área de Cliente ─────────────────────────
-const tabOrdersBtn    = document.getElementById('tab-orders');
-const tabAccountBtn   = document.getElementById('tab-account');
-const tabPanelOrders  = document.getElementById('tab-panel-orders');
-const tabPanelAccount = document.getElementById('tab-panel-account');
-const dropdownAccountSettings = document.getElementById('dropdown-account-settings');
+// ── Cache de Sessão Síncrono ───────────────────────────────────────
+let cachedSession = null;
 
-function switchDashboardTab(tabName) {
-  const isOrders = tabName === 'orders';
-  if (tabOrdersBtn) {
-    tabOrdersBtn.classList.toggle('active', isOrders);
-    tabOrdersBtn.setAttribute('aria-selected', isOrders ? 'true' : 'false');
+async function getSession() {
+  if (cachedSession) return cachedSession;
+  try {
+    const { data } = await sb.auth.getSession();
+    cachedSession = data.session || null;
+  } catch (e) {
+    cachedSession = null;
   }
-  if (tabAccountBtn) {
-    tabAccountBtn.classList.toggle('active', !isOrders);
-    tabAccountBtn.setAttribute('aria-selected', !isOrders ? 'true' : 'false');
-  }
-  if (tabPanelOrders)  tabPanelOrders.classList.toggle('hidden', !isOrders);
-  if (tabPanelAccount) tabPanelAccount.classList.toggle('hidden', isOrders);
-
-  const targetEl = isOrders ? tabPanelOrders : tabPanelAccount;
-  if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+  return cachedSession;
 }
 
-if (tabOrdersBtn)  tabOrdersBtn.addEventListener('click', () => switchDashboardTab('orders'));
-if (tabAccountBtn) tabAccountBtn.addEventListener('click', () => switchDashboardTab('account'));
+// ── Gestão de Vistas de Página (Encomendas vs A Minha Conta) ──────────
+function showView(viewName) {
+  const isOrders = viewName === 'orders';
+  const pageOrders = document.getElementById('page-orders');
+  const pageAccount = document.getElementById('page-account');
+  const navBtnOrders = document.getElementById('nav-btn-orders');
+  const navBtnAccount = document.getElementById('nav-btn-account');
+
+  if (pageOrders)  pageOrders.classList.toggle('hidden', !isOrders);
+  if (pageAccount) pageAccount.classList.toggle('hidden', isOrders);
+
+  if (navBtnOrders) {
+    navBtnOrders.classList.toggle('active', isOrders);
+    navBtnOrders.setAttribute('aria-selected', isOrders ? 'true' : 'false');
+  }
+  if (navBtnAccount) {
+    navBtnAccount.classList.toggle('active', !isOrders);
+    navBtnAccount.setAttribute('aria-selected', !isOrders ? 'true' : 'false');
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('nav-btn-orders')?.addEventListener('click', () => showView('orders'));
+document.getElementById('nav-btn-account')?.addEventListener('click', () => showView('account'));
+document.getElementById('account-back-btn')?.addEventListener('click', () => showView('orders'));
 
 // ── Atalhos de navegação e Dropdown do Header ───────────────────────
-document.getElementById('cta-request')?.addEventListener('click', () => {
+document.getElementById('cta-request')?.addEventListener('click', (e) => {
+  e.preventDefault();
   openRequestModal();
 });
 document.getElementById('footer-request-link')?.addEventListener('click', (e) => {
@@ -115,13 +130,12 @@ document.getElementById('footer-request-link')?.addEventListener('click', (e) =>
 });
 document.getElementById('footer-my-orders')?.addEventListener('click', (e) => {
   e.preventDefault();
-  switchDashboardTab('orders');
+  showView('orders');
 });
 
-document.getElementById('cta-account')?.addEventListener('click', async () => {
-  const session = await getSession();
-  if (session) {
-    switchDashboardTab('account');
+document.getElementById('cta-account')?.addEventListener('click', () => {
+  if (cachedSession) {
+    showView('account');
   } else {
     openAuthModal('login');
   }
@@ -142,7 +156,7 @@ if (dropdownMyOrders) {
   dropdownMyOrders.addEventListener('click', () => {
     userDropdown.classList.add('hidden');
     userMenuWrapper.classList.remove('open');
-    switchDashboardTab('orders');
+    showView('orders');
   });
 }
 
@@ -150,7 +164,7 @@ if (dropdownAccountSettings) {
   dropdownAccountSettings.addEventListener('click', () => {
     userDropdown.classList.add('hidden');
     userMenuWrapper.classList.remove('open');
-    switchDashboardTab('account');
+    showView('account');
   });
 }
 
@@ -322,9 +336,8 @@ authModalClose.addEventListener('click', closeAuthModal);
 authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAuthModal(); });
 
 // ── Modals: Novo Pedido e Termos ──────────────────────────────────
-async function openRequestModal() {
-  const session = await getSession();
-  if (!session) {
+function openRequestModal() {
+  if (!cachedSession) {
     openAuthModal('login');
     return;
   }
@@ -968,9 +981,11 @@ renderSession();
 
 // ── Guard global: abre modal de login ao clicar em qualquer botão ou link
 //    quando o utilizador NÃO está autenticado (excepto elementos data-auth-exempt)
-document.addEventListener('click', async (e) => {
-  // Ignorar cliques dentro do modal de auth (para não bloquear o próprio login)
+document.addEventListener('click', (e) => {
+  // Ignorar cliques dentro dos modais ou menu de utilizador
   if (authModal && !authModal.classList.contains('hidden')) return;
+  if (requestModal && !requestModal.classList.contains('hidden')) return;
+  if (termsModal && !termsModal.classList.contains('hidden')) return;
 
   // Determinar o elemento clicável mais próximo
   const target = e.target.closest('button, a[href], [role="button"]');
@@ -981,8 +996,10 @@ document.addEventListener('click', async (e) => {
   if (target.id === 'theme-toggle') return;
   if (target.id === 'auth-btn') return;
   if (target.id === 'auth-modal-close') return;
+  if (target.id === 'request-modal-close') return;
   if (target.id === 'terms-modal-close') return;
   if (target.closest('#auth-modal')) return;
+  if (target.closest('#request-modal')) return;
   if (target.closest('#terms-modal')) return;
   if (target.closest('#user-menu-wrapper')) return;
 
@@ -990,8 +1007,7 @@ document.addEventListener('click', async (e) => {
   const href = target.getAttribute('href') || '';
   if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http')) return;
 
-  const session = await getSession();
-  if (!session) {
+  if (!cachedSession) {
     e.preventDefault();
     e.stopImmediatePropagation();
     openAuthModal('login');
