@@ -57,8 +57,8 @@
       </div>
     </div>
     <nav class="header-actions" aria-label="Ações de conta">
-      <button class="chip" type="button" id="theme-toggle" aria-label="Alternar tema">Escuro</button>
-      <button class="chip chip-auth" type="button" id="auth-btn">Entrar</button>
+      <button class="chip" type="button" id="theme-toggle" aria-label="Alternar tema" data-auth-exempt>Escuro</button>
+      <button class="chip chip-auth" type="button" id="auth-btn" data-auth-exempt>Entrar</button>
 
       <!-- Dropdown Flutuante de Utilizador -->
       <div class="user-menu-wrapper hidden" id="user-menu-wrapper">
@@ -81,6 +81,10 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               Os meus pedidos
             </button>
+            <button class="user-dropdown-item" type="button" id="dropdown-account-settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              A minha conta
+            </button>
           </div>
           <div class="user-dropdown-divider"></div>
           <div class="user-dropdown-footer">
@@ -98,7 +102,7 @@
   <main id="conteudo" role="main">
 
     <!-- HERO -->
-    <section class="hero" aria-labelledby="hero-heading">
+    <section class="hero" id="hero-section" aria-labelledby="hero-heading">
       <div class="hero-copy reveal" id="hero-copy">
         <span class="eyebrow">
           <span class="eyebrow-dot" aria-hidden="true"></span>
@@ -143,86 +147,157 @@
       </aside>
     </section>
 
-    <!-- TWO COLS -->
-    <div class="two-col">
+    <!-- APLICAÇÃO (LOGADO) -->
+    <div class="app-dashboard hidden" id="app-content">
 
-      <!-- PEDIDO -->
-      <article class="panel reveal" id="pedido" aria-labelledby="pedido-title">
-        <span class="badge">Novo pedido</span>
-        <h2 class="panel-title" id="pedido-title">Submete o teu pedido</h2>
-        <p class="panel-lead">Quanto mais específico fores, melhor conseguimos ajudar-te.</p>
+      <!-- BANNER BOAS-VINDAS -->
+      <section class="welcome-banner" id="welcome-banner" aria-label="Área de cliente">
+        <div class="welcome-glow" aria-hidden="true"></div>
+        <div class="welcome-main">
+          <span class="welcome-badge" id="welcome-badge">Área de cliente</span>
+          <h2 class="welcome-title" id="welcome-title">Bem-vindo de volta! 👋</h2>
+          <p class="welcome-subtitle" id="welcome-subtitle">Acompanha aqui o estado das tuas encomendas em tempo real ou cria um novo pedido de compra.</p>
+        </div>
+        <div class="welcome-action">
+          <button class="btn btn-primary btn-lg welcome-cta" type="button" id="open-request-modal-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Fazer pedido
+          </button>
+        </div>
+      </section>
 
-        <form id="request-form" novalidate>
-          <div class="field">
-            <label class="field-label" for="titulo">Título do pedido</label>
-            <input class="field-input" id="titulo" placeholder="Ex.: Ténis Nike Air Max 90" maxlength="120" required autocomplete="off" />
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label class="field-label" for="tipo">Tipo de pedido</label>
-              <select class="field-input" id="tipo" required>
-                <option value="produto">Produto</option>
-                <option value="roupa">Roupa / Tamanho</option>
-                <option value="outro">Outro</option>
-              </select>
-            </div>
-            <div class="field">
-              <label class="field-label" for="quantidade">Quantidade</label>
-              <input class="field-input" id="quantidade" type="number" min="1" max="99" value="1" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label class="field-label" for="tamanho">Tamanho / variante <span class="optional">(opcional)</span></label>
-              <input class="field-input" id="tamanho" placeholder="Ex.: 42, M, Azul" maxlength="60" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="orcamento">Orçamento</label>
-              <input class="field-input" id="orcamento" placeholder="Ex.: 50–100 €" maxlength="60" required />
-            </div>
-          </div>
-          <div class="field">
-            <label class="field-label" for="link">Link de referência <span class="optional">(opcional)</span></label>
-            <input class="field-input" id="link" type="url" placeholder="https://..." maxlength="500" />
-          </div>
-          <div class="field">
-            <label class="field-label" for="descricao">Descrição detalhada</label>
-            <textarea class="field-input" id="descricao" placeholder="Marca, modelo, cor, loja preferida, alternativas aceitáveis..." maxlength="800" required></textarea>
-            <span class="char-count" id="descricao-count" aria-live="polite">0 / 800</span>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label class="field-label" for="urgencia">Urgência</label>
-              <select class="field-input" id="urgencia">
-                <option value="normal">Normal</option>
-                <option value="urgente">Urgente</option>
-              </select>
-            </div>
-            <div class="field">
-              <label class="field-label" for="contacto">Contacto direto <span class="optional">(opcional)</span></label>
-              <input class="field-input" id="contacto" type="tel" placeholder="Telefone ou WhatsApp" maxlength="30" />
-            </div>
-          </div>
-          <div class="form-footer">
-            <button class="btn btn-primary" type="submit" id="submit-btn"><span>Enviar pedido</span></button>
-            <span class="form-status" id="form-status" role="status" aria-live="polite"></span>
-          </div>
-          <p class="fineprint">O pedido só é enviado depois de iniciares sessão — regista-te ou entra com a tua conta.</p>
-        </form>
-      </article>
+      <!-- SEPARADORES DE NAVEGAÇÃO -->
+      <div class="dash-tabs" role="tablist" aria-label="Separadores da área de cliente">
+        <button class="dash-tab active" type="button" role="tab" id="tab-orders" aria-selected="true" data-tab="orders">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Os meus pedidos
+        </button>
+        <button class="dash-tab" type="button" role="tab" id="tab-account" aria-selected="false" data-tab="account">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Definições da conta
+        </button>
+      </div>
 
-      <!-- PEDIDOS (Área Principal) -->
-      <article class="panel reveal reveal-delay-1" id="meus-pedidos" aria-labelledby="pedidos-title">
-        <span class="badge">Acompanhamento</span>
-        <h2 class="panel-title" id="pedidos-title">Estado dos teus pedidos</h2>
-        <p class="panel-lead">Acompanha aqui o progresso dos teus pedidos em tempo real.</p>
+      <!-- SEPARADOR 1: PEDIDOS DO UTILIZADOR -->
+      <article class="panel tab-content" id="tab-panel-orders" aria-labelledby="pedidos-title">
+        <div class="panel-header-bar">
+          <div>
+            <span class="badge">Acompanhamento</span>
+            <h2 class="panel-title" id="pedidos-title">Os teus pedidos</h2>
+          </div>
+          <button class="btn btn-primary btn-sm" type="button" id="pedidos-header-new-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Novo pedido
+          </button>
+        </div>
+        <p class="panel-lead">Estado em tempo real das tuas encomendas.</p>
 
         <div class="requests-list" id="requests-list" role="list">
           <div class="request-empty" role="listitem">
             <span class="request-empty-icon" aria-hidden="true">🧾</span>
             <strong>Ainda sem pedidos</strong>
-            <span>Inicia sessão para consultares o estado dos teus pedidos.</span>
+            <span>Clica em "Fazer pedido" para submeteres o teu primeiro pedido.</span>
           </div>
+        </div>
+      </article>
+
+      <!-- SEPARADOR 2: DEFINIÇÕES DA CONTA -->
+      <article class="panel tab-content hidden" id="tab-panel-account" aria-labelledby="account-title">
+        <div class="panel-header-bar">
+          <div>
+            <span class="badge">Perfil & Segurança</span>
+            <h2 class="panel-title" id="account-title">Definições da conta</h2>
+          </div>
+        </div>
+        <p class="panel-lead">Gere as tuas informações pessoais, email e palavra-passe num só lugar.</p>
+
+        <div class="account-grid">
+
+          <!-- Secção Nome / Perfil -->
+          <div class="account-card">
+            <h3 class="account-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Nome de utilizador
+            </h3>
+            <form id="profile-name-form" novalidate>
+              <div class="field">
+                <label class="field-label" for="profile-name-input">Nome completo / Perfil</label>
+                <input class="field-input" id="profile-name-input" type="text" placeholder="O teu nome" autocomplete="name" required />
+                <span class="field-error hidden" id="profile-name-err" role="alert"></span>
+              </div>
+              <div class="form-footer" style="margin-top: 10px;">
+                <button class="btn btn-primary btn-sm" type="submit" id="save-name-btn"><span>Guardar nome</span></button>
+                <div id="save-name-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Secção Email -->
+          <div class="account-card">
+            <h3 class="account-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Endereço de email
+            </h3>
+            <form id="profile-email-form" novalidate>
+              <div class="field">
+                <label class="field-label" for="profile-email-input">Novo endereço de email</label>
+                <input class="field-input" id="profile-email-input" type="email" placeholder="o.teu@email.com" autocomplete="email" required />
+                <span class="field-error hidden" id="profile-email-err" role="alert"></span>
+              </div>
+              <div class="form-footer" style="margin-top: 10px;">
+                <button class="btn btn-primary btn-sm" type="submit" id="save-email-btn"><span>Atualizar email</span></button>
+                <div id="save-email-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Secção Palavra-passe -->
+          <div class="account-card full-width">
+            <h3 class="account-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Alterar palavra-passe
+            </h3>
+            <form id="profile-password-form" novalidate>
+              <div class="form-row">
+                <div class="field">
+                  <label class="field-label" for="profile-new-pw">Nova palavra-passe</label>
+                  <div class="pw-wrap">
+                    <input class="field-input" id="profile-new-pw" type="password" placeholder="Mín. 8 caracteres" autocomplete="new-password" required />
+                    <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="profile-new-pw">
+                      <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
+                  <span class="field-error hidden" id="profile-new-pw-err" role="alert"></span>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="profile-confirm-pw">Confirmar palavra-passe</label>
+                  <div class="pw-wrap">
+                    <input class="field-input" id="profile-confirm-pw" type="password" placeholder="Repete a palavra-passe" autocomplete="new-password" required />
+                    <button type="button" class="pw-toggle" aria-label="Mostrar palavra-passe" data-target="profile-confirm-pw">
+                      <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
+                  <span class="field-error hidden" id="profile-confirm-pw-err" role="alert"></span>
+                </div>
+              </div>
+              <div class="pw-strength" id="profile-pw-strength" aria-live="polite">
+                <div class="pw-bars"><span></span><span></span><span></span><span></span></div>
+                <span class="pw-label" id="profile-pw-strength-label"></span>
+              </div>
+              <ul class="pw-rules" id="profile-pw-rules" aria-label="Requisitos da palavra-passe">
+                <li data-rule="len">Mínimo 8 caracteres</li>
+                <li data-rule="upper">Letra maiúscula</li>
+                <li data-rule="lower">Letra minúscula</li>
+                <li data-rule="num">Número</li>
+                <li data-rule="sym">Símbolo (!@#$…)</li>
+              </ul>
+              <div class="form-footer" style="margin-top: 12px;">
+                <button class="btn btn-primary btn-sm" type="submit" id="save-pw-btn"><span>Alterar palavra-passe</span></button>
+                <div id="save-pw-note" class="modal-note hidden" role="status" aria-live="polite"></div>
+              </div>
+            </form>
+          </div>
+
         </div>
       </article>
 
@@ -245,23 +320,43 @@
   <!-- ===== FOOTER ===== -->
   <footer class="site-footer" role="contentinfo">
     <div class="footer-inner">
+
+      <!-- Coluna esquerda: Marca -->
       <div class="footer-brand">
-        <div class="brand-mark brand-mark-sm" aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M7 8c0-2.8 2.2-5 5-5s5 2.2 5 5v2H7V8Z"/>
-            <path d="M6 10h12l-1 10H7L6 10Z"/>
-          </svg>
+        <div class="footer-brand-row">
+          <div class="footer-logo-mark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 8c0-2.8 2.2-5 5-5s5 2.2 5 5v2H7V8Z"/>
+              <path d="M6 10h12l-1 10H7L6 10Z"/>
+            </svg>
+          </div>
+          <span class="footer-name">Bao Bao Club</span>
         </div>
-        <span class="footer-name">Bao Bao Club</span>
+        <p class="footer-tagline">Personal Shopper Digital · Feito com ❤️</p>
       </div>
+
+      <!-- Centro: Links -->
       <nav class="footer-links" aria-label="Links do rodapé">
-        <a href="#pedido">Fazer pedido</a>
-        <a href="#meus-pedidos">Meus pedidos</a>
-        <a href="mailto:hello@baobaoclub.pt">Contacto</a>
-        <a href="#" id="footer-terms">Termos</a>
+        <span class="footer-links-label">Navegação</span>
+        <div class="footer-links-row">
+          <a href="#" id="footer-request-link">Fazer pedido</a>
+          <a href="#" id="footer-my-orders">Meus pedidos</a>
+          <a href="mailto:hello@baobaoclub.pt">Contacto</a>
+          <a href="#" id="footer-terms" data-auth-exempt>Termos</a>
+        </div>
       </nav>
-      <p class="footer-copy">© 2026 Bao Bao Club. Todos os direitos reservados.</p>
+
+      <!-- Coluna direita: Estado + Copyright -->
+      <div class="footer-right">
+        <span class="footer-badge">
+          <span class="footer-badge-dot"></span>
+          Serviço online
+        </span>
+        <p class="footer-copy">© 2026 Bao Bao Club<br>Todos os direitos reservados.</p>
+      </div>
+
     </div>
+    <div class="footer-divider"></div>
   </footer>
 
 </div>
@@ -269,14 +364,22 @@
 <!-- ===== MODAL DE AUTENTICAÇÃO ===== -->
 <div class="modal-backdrop hidden" id="auth-modal">
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-    <div class="modal-head">
-      <h3 id="auth-modal-title">Entrar no Bao Bao Club</h3>
-      <button class="modal-close" id="auth-modal-close" aria-label="Fechar modal">✕</button>
+    <button class="modal-close" id="auth-modal-close" aria-label="Fechar modal">✕</button>
+
+    <div class="modal-brand-head">
+      <div class="modal-brand-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h3 id="auth-modal-title" class="modal-title-text">Bao Bao Club</h3>
+      <p class="modal-subtitle">Entra ou regista-te para fazeres e acompanhares os teus pedidos.</p>
     </div>
 
-    <div class="auth-tabs" role="tablist" aria-label="Modo de autenticação">
-      <button class="auth-tab active" role="tab" aria-selected="true" data-mode="login" id="tab-login">Entrar</button>
-      <button class="auth-tab" role="tab" aria-selected="false" data-mode="register" id="tab-register">Registar</button>
+    <div class="auth-tabs-segmented" role="tablist" aria-label="Modo de autenticação">
+      <button class="auth-tab-segment active auth-tab" role="tab" aria-selected="true" data-mode="login" id="tab-login">Entrar</button>
+      <button class="auth-tab-segment auth-tab" role="tab" aria-selected="false" data-mode="register" id="tab-register">Criar Conta</button>
     </div>
 
     <form id="login-form" class="auth-form" novalidate>
@@ -353,6 +456,92 @@
       <div id="forgot-note" class="modal-note hidden" role="status" aria-live="polite"></div>
     </form>
 
+<!-- ===== MODAL DE NOVO PEDIDO ===== -->
+<div class="modal-backdrop hidden" id="request-modal">
+  <div class="modal-card modal-card-lg" role="dialog" aria-modal="true" aria-labelledby="request-modal-title">
+    <button class="modal-close" id="request-modal-close" aria-label="Fechar modal">✕</button>
+
+    <div class="modal-brand-head">
+      <div class="modal-brand-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <h3 id="request-modal-title" class="modal-title-text">Submeter Novo Pedido</h3>
+      <p class="modal-subtitle">Indica o que precisas e o teu orçamento. Nós tratamos da pesquisa e compra.</p>
+    </div>
+
+    <form id="request-form" novalidate>
+      <div class="field">
+        <label class="field-label" for="titulo">Título do pedido</label>
+        <input class="field-input" id="titulo" placeholder="Ex.: Ténis Nike Air Max 90" maxlength="120" required autocomplete="off" />
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label" for="tipo">Tipo de pedido</label>
+          <select class="field-input" id="tipo" required>
+            <option value="produto">Produto</option>
+            <option value="roupa">Roupa / Tamanho</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="quantidade">Quantidade</label>
+          <input class="field-input" id="quantidade" type="number" min="1" max="99" value="1" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label" for="tamanho">Tamanho / variante <span class="optional">(opcional)</span></label>
+          <input class="field-input" id="tamanho" placeholder="Ex.: 42, M, Azul" maxlength="60" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="orcamento">Orçamento</label>
+          <input class="field-input" id="orcamento" placeholder="Ex.: 50–100 €" maxlength="60" required />
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="link">Link de referência <span class="optional">(opcional)</span></label>
+        <input class="field-input" id="link" type="url" placeholder="https://..." maxlength="500" />
+      </div>
+      <div class="field">
+        <label class="field-label" for="descricao">Descrição detalhada</label>
+        <textarea class="field-input" id="descricao" placeholder="Marca, modelo, cor, loja preferida, alternativas aceitáveis..." maxlength="800" required></textarea>
+        <span class="char-count" id="descricao-count" aria-live="polite">0 / 800</span>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label class="field-label" for="urgencia">Urgência</label>
+          <select class="field-input" id="urgencia">
+            <option value="normal">Normal</option>
+            <option value="urgente">Urgente</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="contacto">Contacto direto <span class="optional">(opcional)</span></label>
+          <input class="field-input" id="contacto" type="tel" placeholder="Telefone ou WhatsApp" maxlength="30" />
+        </div>
+      </div>
+      <div class="form-footer" style="margin-top: 12px;">
+        <button class="btn btn-primary btn-block" type="submit" id="submit-btn"><span>Enviar pedido</span></button>
+        <span class="form-status" id="form-status" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== MODAL TERMOS ===== -->
+<div class="modal-backdrop hidden" id="terms-modal">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="terms-modal-title">
+    <button class="modal-close" id="terms-modal-close" aria-label="Fechar modal">✕</button>
+    <div class="modal-brand-head">
+      <h3 id="terms-modal-title" class="modal-title-text">Termos do Serviço</h3>
+      <p class="modal-subtitle">Bao Bao Club — Personal Shopper Digital</p>
+    </div>
+    <div class="terms-content" style="max-height: 280px; overflow-y: auto; font-size: var(--text-xs); color: var(--muted); line-height: 1.6; display: flex; flex-direction: column; gap: 12px; text-align: left; padding: 4px 8px 4px 0;">
+      <p>1. <strong>Serviço:</strong> O Bao Bao Club atua como serviço de personal shopper digital para pesquisa, aquisição e intermediação de artigos sob encomenda dos clientes.</p>
+      <p>2. <strong>Orçamentos:</strong> Todos os valores de orçamento apresentados são estimativas sujeitas a confirmação de disponibilidade junto do fornecedor ou loja oficial.</p>
+      <p>3. <strong>Acompanhamento:</strong> O estado de cada encomenda é atualizado diretamente na plataforma do cliente em tempo real.</p>
+      <p>4. <strong>Contacto:</strong> Para suporte direto, envia um email para hello@baobaoclub.pt.</p>
+    </div>
   </div>
 </div>
 

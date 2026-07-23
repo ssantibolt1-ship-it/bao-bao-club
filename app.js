@@ -29,7 +29,20 @@ const userMenuEmail     = document.getElementById('user-menu-email');
 const userDropdown      = document.getElementById('user-dropdown');
 const dropdownUserEmail = document.getElementById('dropdown-user-email');
 const dropdownMyOrders  = document.getElementById('dropdown-my-orders');
+const dropdownNewRequest= document.getElementById('dropdown-new-request');
 const heroCopy          = document.getElementById('hero-copy');
+
+// Banner & Modals
+const welcomeBadge      = document.getElementById('welcome-badge');
+const welcomeTitle      = document.getElementById('welcome-title');
+const welcomeSubtitle   = document.getElementById('welcome-subtitle');
+const openRequestModalBtn = document.getElementById('open-request-modal-btn');
+const pedidosHeaderNewBtn = document.getElementById('pedidos-header-new-btn');
+const requestModal      = document.getElementById('request-modal');
+const requestModalClose = document.getElementById('request-modal-close');
+const termsModal        = document.getElementById('terms-modal');
+const termsModalClose   = document.getElementById('terms-modal-close');
+const footerTerms       = document.getElementById('footer-terms');
 
 // Auth forms / elements
 const loginForm      = document.getElementById('login-form');
@@ -65,14 +78,50 @@ function applyTheme(t) {
 applyTheme(theme);
 themeToggle.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark'));
 
+// ── Gestão de Separadores da Área de Cliente ─────────────────────────
+const tabOrdersBtn    = document.getElementById('tab-orders');
+const tabAccountBtn   = document.getElementById('tab-account');
+const tabPanelOrders  = document.getElementById('tab-panel-orders');
+const tabPanelAccount = document.getElementById('tab-panel-account');
+const dropdownAccountSettings = document.getElementById('dropdown-account-settings');
+
+function switchDashboardTab(tabName) {
+  const isOrders = tabName === 'orders';
+  if (tabOrdersBtn) {
+    tabOrdersBtn.classList.toggle('active', isOrders);
+    tabOrdersBtn.setAttribute('aria-selected', isOrders ? 'true' : 'false');
+  }
+  if (tabAccountBtn) {
+    tabAccountBtn.classList.toggle('active', !isOrders);
+    tabAccountBtn.setAttribute('aria-selected', !isOrders ? 'true' : 'false');
+  }
+  if (tabPanelOrders)  tabPanelOrders.classList.toggle('hidden', !isOrders);
+  if (tabPanelAccount) tabPanelAccount.classList.toggle('hidden', isOrders);
+
+  const targetEl = isOrders ? tabPanelOrders : tabPanelAccount;
+  if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+}
+
+if (tabOrdersBtn)  tabOrdersBtn.addEventListener('click', () => switchDashboardTab('orders'));
+if (tabAccountBtn) tabAccountBtn.addEventListener('click', () => switchDashboardTab('account'));
+
 // ── Atalhos de navegação e Dropdown do Header ───────────────────────
 document.getElementById('cta-request')?.addEventListener('click', () => {
-  document.getElementById('pedido')?.scrollIntoView({ behavior: 'smooth' });
+  openRequestModal();
 });
+document.getElementById('footer-request-link')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  openRequestModal();
+});
+document.getElementById('footer-my-orders')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  switchDashboardTab('orders');
+});
+
 document.getElementById('cta-account')?.addEventListener('click', async () => {
   const session = await getSession();
   if (session) {
-    document.getElementById('meus-pedidos')?.scrollIntoView({ behavior: 'smooth' });
+    switchDashboardTab('account');
   } else {
     openAuthModal('login');
   }
@@ -93,7 +142,15 @@ if (dropdownMyOrders) {
   dropdownMyOrders.addEventListener('click', () => {
     userDropdown.classList.add('hidden');
     userMenuWrapper.classList.remove('open');
-    document.getElementById('meus-pedidos')?.scrollIntoView({ behavior: 'smooth' });
+    switchDashboardTab('orders');
+  });
+}
+
+if (dropdownAccountSettings) {
+  dropdownAccountSettings.addEventListener('click', () => {
+    userDropdown.classList.add('hidden');
+    userMenuWrapper.classList.remove('open');
+    switchDashboardTab('account');
   });
 }
 
@@ -245,10 +302,12 @@ function setAuthMode(mode) {
 
 function openAuthModal(mode = 'login') {
   authModal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
   setAuthMode(mode);
 }
 function closeAuthModal() {
   authModal.classList.add('hidden');
+  document.body.style.overflow = '';
   loginForm.reset(); registerForm.reset(); forgotForm.reset();
   setAuthMode('login');
   // reset password strength UI
@@ -261,8 +320,75 @@ function closeAuthModal() {
 authBtn.addEventListener('click', () => openAuthModal('login'));
 authModalClose.addEventListener('click', closeAuthModal);
 authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAuthModal(); });
+
+// ── Modals: Novo Pedido e Termos ──────────────────────────────────
+async function openRequestModal() {
+  const session = await getSession();
+  if (!session) {
+    openAuthModal('login');
+    return;
+  }
+  if (requestModal) {
+    requestModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeRequestModal() {
+  if (requestModal) requestModal.classList.add('hidden');
+  document.body.style.overflow = '';
+  if (requestForm) requestForm.reset();
+  if (formStatus) formStatus.textContent = '';
+  if (descricaoCount) {
+    descricaoCount.textContent = '0 / 800';
+    descricaoCount.classList.remove('limit-near', 'limit-max');
+  }
+}
+
+function openTermsModal() {
+  if (termsModal) {
+    termsModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeTermsModal() {
+  if (termsModal) termsModal.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+if (openRequestModalBtn) openRequestModalBtn.addEventListener('click', openRequestModal);
+if (pedidosHeaderNewBtn) pedidosHeaderNewBtn.addEventListener('click', openRequestModal);
+if (dropdownNewRequest) {
+  dropdownNewRequest.addEventListener('click', () => {
+    if (userDropdown) userDropdown.classList.add('hidden');
+    if (userMenuWrapper) userMenuWrapper.classList.remove('open');
+    openRequestModal();
+  });
+}
+
+if (requestModalClose) requestModalClose.addEventListener('click', closeRequestModal);
+if (requestModal) requestModal.addEventListener('click', (e) => { if (e.target === requestModal) closeRequestModal(); });
+
+if (termsModalClose) termsModalClose.addEventListener('click', closeTermsModal);
+if (termsModal) termsModal.addEventListener('click', (e) => { if (e.target === termsModal) closeTermsModal(); });
+if (footerTerms) {
+  footerTerms.addEventListener('click', (e) => {
+    e.preventDefault();
+    openTermsModal();
+  });
+}
+
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !authModal.classList.contains('hidden')) closeAuthModal();
+  if (e.key === 'Escape') {
+    if (authModal && !authModal.classList.contains('hidden')) closeAuthModal();
+    if (requestModal && !requestModal.classList.contains('hidden')) closeRequestModal();
+    if (termsModal && !termsModal.classList.contains('hidden')) closeTermsModal();
+    if (userDropdown) {
+      userDropdown.classList.add('hidden');
+      if (userMenuWrapper) userMenuWrapper.classList.remove('open');
+    }
+  }
 });
 
 document.querySelectorAll('.auth-tab').forEach(tab => {
@@ -398,36 +524,212 @@ async function getSession() {
 
 async function renderSession() {
   const session = await getSession();
-  if (session?.user) {
-    // 1. Ocultar hero-copy após login
-    if (heroCopy) heroCopy.classList.add('hidden');
+  const heroSection = document.getElementById('hero-section');
+  const appContent  = document.getElementById('app-content');
 
-    // 2. Apresentar utilizador no dropdown do header
+  if (session?.user) {
+    // UTILIZADOR AUTENTICADO: Esconder Hero e mostrar Aplicação
+    if (heroSection) heroSection.classList.add('hidden');
+    if (appContent)  appContent.classList.remove('hidden');
+
     authBtn.classList.add('hidden');
     if (userMenuWrapper) userMenuWrapper.classList.remove('hidden');
-    if (userMenuEmail) userMenuEmail.textContent = session.user.email || 'Utilizador';
+
+    const userMetadataName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || '';
+    const displayName = userMetadataName || (session.user.email || 'utilizador').split('@')[0];
+
+    if (userMenuEmail) userMenuEmail.textContent = displayName;
     if (dropdownUserEmail) dropdownUserEmail.textContent = session.user.email || '';
 
-    // 3. Carregar pedidos na secção principal
+    // Preencher campos das definições de conta se estiverem vazios
+    const profileNameInput = document.getElementById('profile-name-input');
+    const profileEmailInput = document.getElementById('profile-email-input');
+    if (profileNameInput && !profileNameInput.value) profileNameInput.value = userMetadataName;
+    if (profileEmailInput && !profileEmailInput.value) profileEmailInput.value = session.user.email || '';
+
+    // Personalização da mensagem de Boas-Vindas
+    const visitedKey = 'baobao_visited_' + session.user.id;
+    const hasVisited = localStorage.getItem(visitedKey);
+
+    if (!hasVisited) {
+      if (welcomeBadge)    welcomeBadge.textContent = '🎉 Conta criada!';
+      if (welcomeTitle)    welcomeTitle.textContent = `Olá, ${displayName}! Bem-vindo ao Bao Bao Club 👋`;
+      if (welcomeSubtitle) welcomeSubtitle.textContent = 'A tua conta foi registada com sucesso. Clica em "Fazer pedido" para submeteres o teu primeiro pedido — é muito rápido!';
+      localStorage.setItem(visitedKey, 'true');
+    } else {
+      if (welcomeBadge)    welcomeBadge.textContent = 'Área de cliente';
+      if (welcomeTitle)    welcomeTitle.textContent = `Bem-vindo de volta, ${displayName}! 👋`;
+      if (welcomeSubtitle) welcomeSubtitle.textContent = 'Acompanha aqui o estado das tuas encomendas em tempo real ou cria um novo pedido de compra.';
+    }
+
     loadRequests(session.user.id);
     checkAdmin();
   } else {
-    // Mostrar hero-copy se não autenticado
-    if (heroCopy) heroCopy.classList.remove('hidden');
+    // VISITANTE / DESLOGADO: Mostrar Hero e esconder Aplicação
+    if (heroSection) heroSection.classList.remove('hidden');
+    if (appContent)  appContent.classList.add('hidden');
 
     authBtn.classList.remove('hidden');
     if (userMenuWrapper) userMenuWrapper.classList.add('hidden');
     if (userDropdown) userDropdown.classList.add('hidden');
     if (userMenuWrapper) userMenuWrapper.classList.remove('open');
 
-    requestsList.innerHTML = `
-      <div class="request-empty">
-        <span class="request-empty-icon" aria-hidden="true">🧾</span>
-        <strong>Ainda sem pedidos</strong>
-        <span>Inicia sessão para consultares o estado dos teus pedidos.</span>
-      </div>`;
     adminPanel.classList.add('hidden');
+
+    // Voltar ao topo ao fazer logout
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+}
+
+// ── Atualizações de Perfil e Conta ─────────────────────────────────
+const profileNameForm = document.getElementById('profile-name-form');
+const saveNameBtn     = document.getElementById('save-name-btn');
+const saveNameNote    = document.getElementById('save-name-note');
+
+if (profileNameForm) {
+  profileNameForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearFieldErrors('profile-name-err');
+    hideNote(saveNameNote);
+
+    const nameVal = document.getElementById('profile-name-input').value.trim();
+    if (!nameVal) {
+      showFieldError('profile-name-err', 'Introduz o teu nome.');
+      return;
+    }
+
+    saveNameBtn.disabled = true;
+    saveNameBtn.querySelector('span').textContent = 'A guardar...';
+
+    try {
+      const { error } = await sb.auth.updateUser({ data: { full_name: nameVal } });
+      if (error) {
+        showNote(saveNameNote, translateError(error.message));
+      } else {
+        showNote(saveNameNote, 'Nome de utilizador atualizado com sucesso!', false);
+        toast('Nome de utilizador guardado.', 'success');
+        renderSession();
+      }
+    } catch (err) {
+      showNote(saveNameNote, translateError('network'));
+    }
+
+    saveNameBtn.disabled = false;
+    saveNameBtn.querySelector('span').textContent = 'Guardar nome';
+  });
+}
+
+const profileEmailForm = document.getElementById('profile-email-form');
+const saveEmailBtn     = document.getElementById('save-email-btn');
+const saveEmailNote    = document.getElementById('save-email-note');
+
+if (profileEmailForm) {
+  profileEmailForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearFieldErrors('profile-email-err');
+    hideNote(saveEmailNote);
+
+    const emailVal = document.getElementById('profile-email-input').value.trim().toLowerCase();
+    if (!emailVal || !emailVal.includes('@')) {
+      showFieldError('profile-email-err', 'Introduz um email válido.');
+      return;
+    }
+
+    saveEmailBtn.disabled = true;
+    saveEmailBtn.querySelector('span').textContent = 'A atualizar...';
+
+    try {
+      const { error } = await sb.auth.updateUser({ email: emailVal });
+      if (error) {
+        showNote(saveEmailNote, translateError(error.message));
+      } else {
+        showNote(saveEmailNote, 'Pedido enviado! Verifica a caixa de entrada do novo email para confirmar a alteração.', false);
+        toast('Verifica o teu novo email para confirmar.', 'success');
+      }
+    } catch (err) {
+      showNote(saveEmailNote, translateError('network'));
+    }
+
+    saveEmailBtn.disabled = false;
+    saveEmailBtn.querySelector('span').textContent = 'Atualizar email';
+  });
+}
+
+const profilePwForm   = document.getElementById('profile-password-form');
+const profileNewPw    = document.getElementById('profile-new-pw');
+const profileConfirmPw= document.getElementById('profile-confirm-pw');
+const savePwBtn       = document.getElementById('save-pw-btn');
+const savePwNote      = document.getElementById('save-pw-note');
+const profilePwStrength = document.getElementById('profile-pw-strength');
+const profilePwStrengthLabel = document.getElementById('profile-pw-strength-label');
+const profilePwRules  = document.getElementById('profile-pw-rules');
+
+if (profileNewPw && profilePwStrength) {
+  profileNewPw.addEventListener('input', () => {
+    const pw = profileNewPw.value;
+    const results = evalPassword(pw);
+    const score = results.filter(r => r.ok).length;
+
+    results.forEach(r => {
+      const li = profilePwRules?.querySelector(`[data-rule="${r.key}"]`);
+      if (li) li.classList.toggle('rule-ok', r.ok);
+    });
+
+    const bars = profilePwStrength.querySelectorAll('.pw-bars span');
+    bars.forEach((bar, i) => {
+      bar.className = '';
+      if (pw.length > 0 && i < score) bar.classList.add(STRENGTH_CLASSES[score] || '');
+    });
+
+    if (profilePwStrengthLabel) {
+      profilePwStrengthLabel.textContent = pw.length > 0 ? (STRENGTH_LABELS[score] || '') : '';
+    }
+  });
+}
+
+if (profilePwForm) {
+  profilePwForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearFieldErrors('profile-new-pw-err', 'profile-confirm-pw-err');
+    hideNote(savePwNote);
+
+    const newPw = profileNewPw.value;
+    const confirmPw = profileConfirmPw.value;
+
+    let ok = true;
+    if (!passwordIsValid(newPw)) {
+      showFieldError('profile-new-pw-err', 'A palavra-passe não cumpre todos os requisitos.');
+      ok = false;
+    }
+    if (newPw !== confirmPw) {
+      showFieldError('profile-confirm-pw-err', 'As palavras-passe não coincidem.');
+      ok = false;
+    }
+    if (!ok) return;
+
+    savePwBtn.disabled = true;
+    savePwBtn.querySelector('span').textContent = 'A alterar...';
+
+    try {
+      const { error } = await sb.auth.updateUser({ password: newPw });
+      if (error) {
+        showNote(savePwNote, translateError(error.message));
+      } else {
+        showNote(savePwNote, 'Palavra-passe alterada com sucesso!', false);
+        toast('Palavra-passe alterada com sucesso.', 'success');
+        profilePwForm.reset();
+        const bars = profilePwStrength.querySelectorAll('.pw-bars span');
+        bars.forEach(b => b.className = '');
+        if (profilePwStrengthLabel) profilePwStrengthLabel.textContent = '';
+        if (profilePwRules) profilePwRules.querySelectorAll('li').forEach(li => li.classList.remove('rule-ok'));
+      }
+    } catch (err) {
+      showNote(savePwNote, translateError('network'));
+    }
+
+    savePwBtn.disabled = false;
+    savePwBtn.querySelector('span').textContent = 'Alterar palavra-passe';
+  });
 }
 
 sb.auth.onAuthStateChange((_event, session) => {
@@ -563,12 +865,8 @@ requestForm.addEventListener('submit', async (e) => {
       formStatus.textContent = translateError(error.message);
       toast('Não foi possível enviar o pedido.', 'error');
     } else {
-      formStatus.textContent = 'Pedido enviado com sucesso.';
       toast('Pedido enviado com sucesso.', 'success');
-      requestForm.reset();
-      document.getElementById('quantidade').value = 1;
-      descricaoCount.textContent = '0 / 800';
-      descricaoCount.classList.remove('limit-near', 'limit-max');
+      closeRequestModal();
       loadRequests(session.user.id);
     }
   } catch (err) {
@@ -667,3 +965,35 @@ adminRefreshBtn.addEventListener('click', loadAdminRequests);
 
 // ── Arranque ───────────────────────────────────────────────────────
 renderSession();
+
+// ── Guard global: abre modal de login ao clicar em qualquer botão ou link
+//    quando o utilizador NÃO está autenticado (excepto elementos data-auth-exempt)
+document.addEventListener('click', async (e) => {
+  // Ignorar cliques dentro do modal de auth (para não bloquear o próprio login)
+  if (authModal && !authModal.classList.contains('hidden')) return;
+
+  // Determinar o elemento clicável mais próximo
+  const target = e.target.closest('button, a[href], [role="button"]');
+  if (!target) return;
+
+  // Elementos isentos do guard
+  if (target.hasAttribute('data-auth-exempt')) return;
+  if (target.id === 'theme-toggle') return;
+  if (target.id === 'auth-btn') return;
+  if (target.id === 'auth-modal-close') return;
+  if (target.id === 'terms-modal-close') return;
+  if (target.closest('#auth-modal')) return;
+  if (target.closest('#terms-modal')) return;
+  if (target.closest('#user-menu-wrapper')) return;
+
+  // Links externos (mailto, tel, etc.) — deixar passar
+  const href = target.getAttribute('href') || '';
+  if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http')) return;
+
+  const session = await getSession();
+  if (!session) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    openAuthModal('login');
+  }
+}, true); // capture = true para intercepção antecipada
